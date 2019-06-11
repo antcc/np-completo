@@ -35,25 +35,37 @@ que hace que la salida sea verdadera. Probar que \verb|CSAT| es NP-completo.\\
 
 \subsection*{3-SAT $\mathbf{\propto}$ CSAT}
 
-Dada una instancia de \verb|3-SAT| formada por un conjunto $U=\{x_1, \dots, x_n\}$ de variables junto con un conjunto $C$ de $m$ cláusulas en forma normal conjuntiva (CNF) y cada una con tres variables, construimos por cada cláusula una puerta OR cuyas entradas son las variables involucradas, eventualmente negadas mediante una puerta NOT en caso de que aparecieran con el símbolo $\lnot$ delante en la fórmula. Las salidas de todas las puertas OR van a parar a una puerta AND final que las combina todas, y cuya salida es la salida del circuito. Notemos que si queremos obligar a que cada puerta lógica tenga únicamente dos entradas podemos emplear dos puertas OR para cada cláusula y $m-1$ puertas AND al final, encadenándolas correctamente.\\
+Dada una instancia de \verb|3-SAT| formada por un conjunto $U=\{x_1, \dots, x_n\}$ de variables junto con un conjunto $C$ de $m$ cláusulas, cada una consistente en una disyunción de exactamente tres literales en las variables de $U$, construimos por cada cláusula una puerta OR cuyas entradas son las variables involucradas, eventualmente negadas mediante una puerta NOT en caso de que aparecieran con el símbolo $\lnot$ delante en la fórmula. Las salidas de todas las puertas OR van a parar a una puerta AND final que las combina todas, y cuya salida es la salida del circuito. Notemos que si queremos obligar a que cada puerta lógica tenga únicamente dos entradas podemos emplear dos puertas OR para cada cláusula y $m-1$ puertas AND al final, encadenándolas correctamente.\\
 
-Es decir, si denotamos indistintamente $x^*_i$ a $x_i$ ó $\lnot x_i$, e indicamos con un segundo índice la pertenencia de una variable a una cierta cláusula, podemos escribir
+Es decir, si denotamos indistintamente $x^*_i$ a $x_i$ ó $\lnot x_i$, y $C = { c_1, \dots, c_m}$ con $c_i = x^*_{i1} \lor x^*_{i2}\lor x^*_{i3}$, la satisfabilidad de $C$ equivale a la de
 
 \[
-C = \left\{ \bigwedge_{h=1}^m (x^*_{ih} \lor x^*_{jh} \lor x^*_{kh}) : i, j, k \in \{1,\dots,n \} \right\},
-\] 
+\bigwedge_{i=1}^m (x^*_{i1} \lor x^*_{i2} \lor x^*_{i3}),
+\]
 
 y de esta forma el circuito lógico resultante de la reducción se puede escribir (en notación prefija) como:
 
 \[
-\text{AND}(\text{OR}(X_{i1},X_{j1},X_{k1}), \dots, \text{OR}(X_{im}, X_{jm}, X_{km})),
+\text{AND}(\text{OR}(X_{11},X_{12},X_{13}), \dots, \text{OR}(X_{m1}, X_{m2}, X_{m3})),
 \]
 
 donde $X_{ih} = x_i$ ó $X_{ih} = \text{NOT}(x_i)$ dependiendo de si era $x^*_{ih} = x_{ih}$ ó $x_{ih}^* = \lnot x_{ih}$.\\
 
 La equivalencia entre ambos problemas es clara: si hay una asignación de valores de verdad que hace verdaderas todas las cláusulas de la instancia de \verb|3-SAT|, esa misma asignación hará que la salida del circuito construido sea verdadera, y viceversa.\\
 
-Además, esta reducción se realiza en espacio logarítmico, pues consiste únicamente en ir leyendo la entrada e ir escribiendo en la salida, sustituyendo los símbolos tal y como se ha explicado sin usar memoria adicional.
+Además, esta reducción se realiza en espacio logarítmico, pues consiste únicamente en ir leyendo la entrada e ir escribiendo en la salida, sustituyendo los símbolos tal y como se ha explicado sin usar memoria adicional. Si suponemos, por ejemplo, que la entrada al problema \verb|3-SAT| viene dada en la forma:
+
+\[
+  n_{1} c n_{2} c n_{3} c \dots c n_{3m-2} c n_{3m-1} c n_{3m}
+\]
+
+con $n_{i}$ un número entre 1 y $n$ en binario, más un bit de negación, y entendiendo que el conjunto de cláusulas es $C = \{ x^*_{n_3i}\lor x^*_{n_3i+1} \lor x^*_{n_3i+2} : i=1,\dots,m \}$, y que la entrada a \verb|CSAT| que calcula la reducción es:
+
+\[
+  \underbrace{n_{1}c\dots cn_{3m}}_\text{nodos}\ C\ \underbrace{n_{1}e\texttt{or}_{1}cn_{2}e\texttt{or}_{1}cn_{3}e\texttt{or}_{1}c\ \dots\ cn_{3m}e\texttt{or}_{m}}_\text{disyunciones entre los nodos}\ c \ \underbrace{\texttt{or}_{1}e\texttt{and}c\dots c\texttt{or}_{m}e\texttt{and}}_\text{conjunciones}
+\]
+
+Para calcular esta entrada a partir de la primera solo son necesarios un número constante de contadores para almacenar, a lo más, $m$, y que por tanto solo requieren de espacio logarítmico en la entrada.
 
 \subsection*{Ejemplo}
 

@@ -35,9 +35,9 @@ que hace que la salida sea verdadera. Probar que \verb|CSAT| es NP-completo.\\
 
 \subsection*{3-SAT $\mathbf{\propto}$ CSAT}
 
-Dada una instancia de \verb|3-SAT| formada por un conjunto $U=\{x_1, \dots, x_n\}$ de variables junto con un conjunto $C$ de $m$ cláusulas, cada una consistente en una disyunción de exactamente tres literales en las variables de $U$, construimos por cada cláusula una puerta OR cuyas entradas son las variables involucradas, eventualmente negadas mediante una puerta NOT en caso de que aparecieran con el símbolo $\lnot$ delante en la fórmula. Las salidas de todas las puertas OR van a parar a una puerta AND final que las combina todas, y cuya salida es la salida del circuito. Notemos que si queremos obligar a que cada puerta lógica tenga únicamente dos entradas podemos emplear dos puertas OR para cada cláusula y $m-1$ puertas AND al final, encadenándolas correctamente.\\
+Dada una instancia de \verb|3-SAT| formada por un conjunto $U=\{x_0, \dots, x_{n-1}\}$ de variables junto con un conjunto $C$ de $m$ cláusulas, cada una consistente en una disyunción de exactamente tres literales en las variables de $U$, construimos por cada cláusula una puerta OR cuyas entradas son las variables involucradas, eventualmente negadas mediante una puerta NOT en caso de que aparecieran con el símbolo $\lnot$ delante en la fórmula. Las salidas de todas las puertas OR van a parar a una puerta AND final que las combina todas, y cuya salida es la salida del circuito. Notemos que si queremos obligar a que cada puerta lógica tenga únicamente dos entradas podemos emplear dos puertas OR para cada cláusula y $m-1$ puertas AND al final, encadenándolas correctamente.\\
 
-Es decir, si denotamos indistintamente $x^*_i$ a $x_i$ ó $\lnot x_i$, y $C = { c_1, \dots, c_m}$ con $c_i = x^*_{i1} \lor x^*_{i2}\lor x^*_{i3}$, la satisfabilidad de $C$ equivale a la de
+Es decir, si denotamos indistintamente $x^*_i$ a $x_i$ ó $\lnot x_i$, y $C = \{ c_1, \dots, c_m\}$ con $c_i = x^*_{i1} \lor x^*_{i2}\lor x^*_{i3}$, la satisfabilidad de $C$ equivale a la de
 
 \[
 \bigwedge_{i=1}^m (x^*_{i1} \lor x^*_{i2} \lor x^*_{i3}),
@@ -53,24 +53,40 @@ donde $X_{ih} = x_i$ ó $X_{ih} = \text{NOT}(x_i)$ dependiendo de si era $x^*_{i
 
 La equivalencia entre ambos problemas es clara: si hay una asignación de valores de verdad que hace verdaderas todas las cláusulas de la instancia de \verb|3-SAT|, esa misma asignación hará que la salida del circuito construido sea verdadera, y viceversa.\\
 
-Además, esta reducción se realiza en espacio logarítmico, pues consiste únicamente en ir leyendo la entrada e ir escribiendo en la salida, sustituyendo los símbolos tal y como se ha explicado sin usar memoria adicional. Si suponemos, por ejemplo, que la entrada al problema \verb|3-SAT| viene dada en la forma:
+Además, esta reducción se realiza en espacio logarítmico, pues consiste únicamente en ir leyendo la entrada e ir escribiendo en la salida, sustituyendo los símbolos tal y como se ha explicado. Si suponemos, por ejemplo, que la entrada al problema \verb|3-SAT| viene dada en la forma:
 
 \[
-  n_{1} c n_{2} c n_{3} c \dots c n_{3m-2} c n_{3m-1} c n_{3m}
+  n_{0} c n_{1} c n_{2} c \dots c n_{3m-3} c n_{3m-2} c n_{3m-1}
 \]
 
-con $n_{i}$ un número entre 1 y $n$ en binario, más un bit de negación, y entendiendo que el conjunto de cláusulas es $C = \{ x^*_{n_3i}\lor x^*_{n_3i+1} \lor x^*_{n_3i+2} : i=1,\dots,m \}$, y que la entrada a \verb|CSAT| que calcula la reducción es:
+con $n_{i}$ un número entre 0 y $n-1$ en binario, más un bit de negación delante, y entendiendo que el conjunto de cláusulas es $C = \{ x^*_{n_{3i}}\lor x^*_{n_{3i+1}} \lor x^*_{n_{3i+2}} : i=0,\dots,m-1 \}$, y que la entrada a \verb|CSAT| que calcula la reducción es:
 
 \[
-  \underbrace{n_{1}c\dots cn_{3m}}_\text{nodos}\ C\ \underbrace{n_{1}e\texttt{or}_{1}cn_{2}e\texttt{or}_{1}cn_{3}e\texttt{or}_{1}c\ \dots\ cn_{3m}e\texttt{or}_{m}}_\text{disyunciones entre los nodos}\ c \ \underbrace{\texttt{or}_{1}e\texttt{and}c\dots c\texttt{or}_{m}e\texttt{and}}_\text{conjunciones}
+  \underbrace{n_{0}c\dots cn_{3m-1}}_\text{nodos}\ X\ \underbrace{n_{0}e\texttt{or}_{1}cn_{1}e\texttt{or}_{1}cn_{2}e\texttt{or}_{1}c\ \dots\ cn_{3m-1}e\texttt{or}_{m}}_\text{disyunciones entre los nodos}\ X \ \underbrace{\texttt{or}_{1}e\texttt{and}c\dots \texttt{or}_{m}e\texttt{and}}_\text{conjunciones}
 \]
 
-Para calcular esta entrada a partir de la primera solo son necesarios un número constante de contadores para almacenar, a lo más, $m$, y que por tanto solo requieren de espacio logarítmico en la entrada.
+Notamos que los símbolos \textit{c,e} y \textit{X} son separadores. Para calcular esta entrada a partir de la primera solo son necesarios un número constante de contadores para almacenar, a lo más, $m$, y que por tanto solo requieren de espacio logarítmico en la entrada.
 
 \subsection*{Ejemplo}
 
-%% Falta poner el ejemplo
+Sea $U = \{x_0,x_1,x_2,x_3\}$ y $C = \{ x_0 \lor \lnot x_1 \lor x_2, \lnot x_0 \lor x_1 \lor x_3 \}$. La entrada codificada para la reducción sería
 
+\[
+000c101c010c100c001c011
+\]
+
+y por tanto la salida calculada que representa el circuito lógico asociado es
+\[
+000c101c010c100c001c011 \ X 
+\]
+\[
+000e\texttt{or}_{1}c101e\texttt{or}_{1}c010e\texttt{or}_{1}c100e\texttt{or}_{2}c001e\texttt{or}_{2}c011e\texttt{or}_{2}\ X
+\]
+\[
+ \texttt{or}_{1}e\texttt{and}c\texttt{or}_2\texttt{and}
+\]
+
+El circuito lógico que pintaríamos sería el siguiente:
 
 %% Circuito de prueba
 \vspace{2em}
@@ -84,42 +100,33 @@ Para calcular esta entrada a partir de la primera solo son necesarios un número
     \node (x1) at (2,0) {$x_1$};
     \node (x0) at (3,0) {$x_0$};
 
-    \node[not gate US, draw, rotate=-90] at ($(x2)+(0.5,-1)$) (Not2) {};
     \node[not gate US, draw, rotate=-90] at ($(x1)+(0.5,-1)$) (Not1) {};
     \node[not gate US, draw, rotate=-90] at ($(x0)+(0.5,-1)$) (Not0) {};
-
     \node[or gate US, draw, logic gate inputs=nnn] at ($(x0)+(2,-2)$) (Or1) {};
-    \node[or gate US, draw, logic gate inputs=nnnn] at ($(Or1)+(0,-1)$) (Or2) {};
-    \node[or gate US, draw, logic gate inputs=nnn] at ($(Or2)+(0,-1)$) (Or3) {};
-    \node[xor gate US, draw, logic gate inputs=nn] at ($(Or3)+(0,-1)$) (Xor1) {};
-    \node[and gate US, draw, logic gate inputs=nn, anchor=input 1] at ($(Or3.output)+(1,0)$) (And1) {};
-    \node[nor gate US, draw, logic gate inputs=nn, anchor=input 1] at ($(Or2.output -| And1.output)+(1,0)$) (Nor1) {};
-    \node[and gate US, draw, logic gate inputs=nn, anchor=input 1] at ($(Or1.output -| Nor1.output)+(1,0)$) (And2) {};
+    \node[or gate US, draw, logic gate inputs=nnn] at ($(Or1)+(0,-1)$) (Or3) {};
+    \node[and gate US, draw, logic gate inputs=nn, anchor=input 1] at ($(Or3.output)+(1,0.5)$) (And1) {};
 
-    \foreach \i in {2,1,0}
+    \foreach \i in {1,0}
     {
         \path (x\i) -- coordinate (punt\i) (x\i |- Not\i.input);
         \draw (punt\i) node[branch] {} -| (Not\i.input);
     }
-    \draw (x3) |- (Or2.input 1);
-    \draw (x3 |- Or1.input 1) node[branch] {} -- (Or1.input 1);
-    \draw (x2) |- (Xor1.input 1);
-    \draw (x2 |- Or3.input 1) node[branch] {} -- (Or3.input 1);
-    \draw (Not2.output) |- (Or2.input 2);
-    \draw (x1) |- (Or3.input 2);
-    \draw (x1 |- Or1.input 2) node[branch] {} -- (Or1.input 2);
-    \draw (Not1.output) |- (Xor1.input 2);
-    \draw (Not1.output |- Or2.input 3) node[branch] {} -- (Or2.input 3);
-    \draw (x0) |- (Or2.input 4);
-    \draw (Not0.output) |- (Or3.input 3);
-    \draw (Not0.output |- Or1.input 3) node[branch] {} -- (Or1.input 3);
-    \draw (Or3.output) -- (And1.input 1);
-    \draw (Xor1.output) -- ([xshift=0.5cm]Xor1.output) |- (And1.input 2);
-    \draw (Or2.output) -- (Nor1.input 1);
-    \draw (And1.output) -- ([xshift=0.5cm]And1.output) |- (Nor1.input 2);
-    \draw (Or1.output) -- (And2.input 1);
-    \draw (Nor1.output) -- ([xshift=0.5cm]Nor1.output) |- (And2.input 2);
-    \draw (And2.output) -- ([xshift=0.5cm]And2.output) node[above] {$f_1$};
+    
+    %\draw (x3 |- Or1.input 1) node[branch] {} -- (Or1.input 1);
+  
+    
+    \draw (x0) |- (Or1.input 1);
+    \draw (Not1.output) |- (Or1.input 2);
+    \draw (x2) |- (Or1.input 3);
+    
+     \draw (Not0.output) |- (Or3.input 1);
+     \draw (x1) |- (Or3.input 2);
+     \draw (x3) |- (Or3.input 3);
+
+    %\draw (Not0.output |- Or1.input 3) node[branch] {} -- (Or1.input 3);
+    \draw (Or1.output) -- (And1.input 1);
+    \draw (Or3.output) -- (And1.input 2);
+    \draw (And1.output) -- ([xshift=0.5cm]And1.output) node[above] {$f$};
 \end{tikzpicture}
 \end{center}
 

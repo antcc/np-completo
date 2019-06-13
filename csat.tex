@@ -59,7 +59,7 @@ Además, esta reducción se realiza en espacio logarítmico, pues consiste únic
   n_{0} c n_{1} c n_{2} c \dots c n_{3m-3} c n_{3m-2} c n_{3m-1}
 \]
 
-con $n_{i}$ un número entre 0 y $n-1$ en binario, más un bit de negación delante, y entendiendo que el conjunto de cláusulas es $C = \{ x^*_{n_{3i}}\lor x^*_{n_{3i+1}} \lor x^*_{n_{3i+2}} : i=0,\dots,m-1 \}$, y que la entrada a \verb|CSAT| que calcula la reducción es:
+con $n_{i}$ un número entre 0 y $n-1$ en binario, más un bit de negación delante, y entendiendo que el conjunto de cláusulas es $C = \{ x^*_{n_{3i}}\lor x^*_{n_{3i+1}} \lor x^*_{n_{3i+2}} : i=0,\dots,m-1 \}$, la entrada a \verb|CSAT| que calcula la reducción es:
 
 \[
   \underbrace{n_{0}c\dots cn_{3m-1}}_\text{nodos}\ X\ \underbrace{n_{0}e\texttt{or}_{1}cn_{1}e\texttt{or}_{1}cn_{2}e\texttt{or}_{1}c\ \dots\ cn_{3m-1}e\texttt{or}_{m}}_\text{disyunciones entre los nodos}\ X \ \underbrace{\texttt{or}_{1}e\texttt{and}c\dots \texttt{or}_{m}e\texttt{and}}_\text{conjunciones}
@@ -88,9 +88,8 @@ y por tanto la salida calculada que representa el circuito lógico asociado es
 
 El circuito lógico que pintaríamos sería el siguiente:
 
-%% Circuito de prueba
 \vspace{2em}
-\thispagestyle{empty}
+%\thispagestyle{empty}
 \tikzstyle{branch}=[fill,shape=circle,minimum size=3pt,inner sep=0pt]
 \begin{center}
 \begin{tikzpicture}[label distance=2mm]
@@ -129,6 +128,8 @@ El circuito lógico que pintaríamos sería el siguiente:
     \draw (And1.output) -- ([xshift=0.5cm]And1.output) node[above] {$f$};
 \end{tikzpicture}
 \end{center}
+
+Se adjunta un programa en \verb|Python| llamado \verb|3sat-to-csat.py| que calcula la reducción explicada a partir de una entrada en el formato descrito anteriormente.
 
 \end{sol}
 
